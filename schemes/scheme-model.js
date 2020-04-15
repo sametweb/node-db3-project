@@ -19,7 +19,12 @@ function findById(id) {
 }
 
 function findSteps(scheme_id) {
-  return db("steps").where({ scheme_id });
+  return db
+    .select("steps.id", "step_number", "instructions", "scheme_name")
+    .from("steps")
+    .join("schemes", "steps.scheme_id", "schemes.id")
+    .where({ scheme_id })
+    .orderBy("step_number", "asc");
 }
 
 function add(schemeData) {
@@ -30,9 +35,9 @@ function add(schemeData) {
     });
 }
 
-function addStep(stepData, scheme_id) {
+function addStep(step, scheme_id) {
   return db("steps")
-    .insert({ ...stepData, scheme_id }, "id")
+    .insert({ ...step, scheme_id }, "id")
     .then(([id]) => {
       return db("steps").where({ id }).first();
     });
@@ -48,5 +53,10 @@ function update(changes, id) {
 }
 
 function remove(id) {
-  return db("schemes").del().where({ id });
+  return db("schemes")
+    .where({ id })
+    .first()
+    .then((ifExists) => {
+      return ifExists ? db("schemes").del().where({ id }) : null;
+    });
 }

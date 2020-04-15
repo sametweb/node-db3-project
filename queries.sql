@@ -28,3 +28,22 @@ select
 from [order] as o
 join customer as c on c.id = o.customerid
 join employee as e on o.employeeid = e.id;
+
+-- STRETCH
+
+-- Displays CategoryName and a new column called Count that shows how many products are in each category. Shows 8 records.
+
+select
+  categoryname
+  , count(p.categoryid) as [Total Products]
+from categories as c
+join products as p on c.categoryid = p.categoryid
+group by p.categoryid;
+
+-- Display OrderID and a column called ItemCount that shows the total number of products placed on the order. Shows 196 records.
+
+select
+  orderid
+  , count(productid) as ItemCount
+from orderdetails
+group by orderid;
